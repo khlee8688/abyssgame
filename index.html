@@ -9,9 +9,8 @@
 <meta property="og:type" content="website">
 <meta property="og:title" content="ABYSS">
 <meta property="og:description" content="수심 5,200m에 가라앉은 유적으로 내려가는 1인칭 수중 호러 게임">
-<!-- once the site has its address, write the picture's full address here (https://.../img/og.jpg): messengers do not
-     follow a relative one -->
-<meta property="og:image" content="img/og.jpg">
+<!-- the picture's full address: messengers do not follow a relative one -->
+<meta property="og:image" content="https://khlee8688.github.io/abyssgame/img/og.jpg">
 <link rel="icon" type="image/png" href="img/icon.png">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
 <link rel="stylesheet" href="css/style.css">
@@ -35,17 +34,18 @@
 <main>
 
   <!-- ================= the name over the game: scrolling swims toward the giant's hand ================= -->
-  <!-- The swim is 80 stills of a filmed take (img/dive/000.jpg ... 079.jpg) drawn one after another as the page is
-       scrolled; the screen stays in place meanwhile. Without scripts, or with motion turned down, the last still
-       stands there and the page scrolls on as usual. -->
-  <section class="hero" data-dive="img/dive/" data-frames="80">
+  <!-- The swim is 82 stills taken in the game, drawn one after another as the page is scrolled; the screen stays
+       in place meanwhile. They are kept in cuts for different screens, each in a folder of its own under
+       img/dive/ (000.webp ... 081.webp): tall, the upright middle for a phone; wide, the whole picture; large, the
+       whole picture for a large screen (data-sets names the ones that are there). Without scripts, or with
+       motion turned down, the last still stands there and the page scrolls on as usual. -->
+  <section class="hero" data-dive="img/dive/" data-frames="82" data-sets="tall wide large">
     <div class="hero-pin">
-      <img class="hero-still" src="img/dive_last.jpg" alt="버섯 동굴에서 유물을 쥐고 있는 거대한 손" width="1280" height="720">
+      <picture><source media="(max-aspect-ratio: 4/5)" srcset="img/dive_last_tall.jpg"><img class="hero-still" src="img/dive_last.jpg" alt="버섯 동굴에서 유물을 쥐고 있는 거대한 손"></picture>
       <canvas class="hero-canvas" aria-hidden="true"></canvas>
       <div class="hero-name">
         <h1 class="title" aria-label="ABYSS">ABYS<span>S</span></h1>
         <p class="tag">1인칭 수중 호러</p>
-        <p class="on-what">PC (Windows)</p>
       </div>
       <p class="cue" aria-hidden="true">SCROLL</p>
     </div>

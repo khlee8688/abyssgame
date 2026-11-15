@@ -77,6 +77,8 @@ button { font: inherit; color: inherit; }
 .hero-still { object-fit: cover; object-position: 50% 30%; opacity: .62; }
 .hero-canvas { display: none; }
 .dive .hero-still { display: none; }
+.dive .no-swim .hero-still { display: block; }
+.dive .no-swim .hero-canvas { display: none; }
 /* the picture is dim behind the name and comes up to the game's own brightness as the name goes */
 .dive .hero-canvas { display: block; opacity: calc(.5 + .5 * var(--dive)); }
 .hero-pin::after { content: ""; position: absolute; left: 0; right: 0; bottom: 0; height: 30%; z-index: 1; background: linear-gradient(rgba(0, 0, 0, 0), #000 94%); pointer-events: none; }

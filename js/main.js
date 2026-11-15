@@ -21,11 +21,17 @@
     var pen = canvas && canvas.getContext ? canvas.getContext('2d') : null;
     if (pen) {
       var count = parseInt(hero.getAttribute('data-frames'), 10) || 1;
-      var folder = hero.getAttribute('data-dive');
-      var stills = new Array(count);
+      var base = hero.getAttribute('data-dive');
+      // the same stills cut for different screens, each in a folder of its own: "tall", the upright middle for a
+      // phone; "wide", the whole picture; "large", the whole picture for a large screen
+      var cuts = (hero.getAttribute('data-sets') || 'wide').split(' ');
+      var cut = '';
+      var turn = 0;
+      var stills = [];
       var shown = -1;
       var wanted = 0;
-      var name = function (index) { return folder + ('00' + index).slice(-3) + '.jpg'; };
+      var next = 0;
+      var name = function (index) { return base + cut + '/' + ('00' + index).slice(-3) + '.webp'; };
       var draw = function () {
         // the nearest still already here, looking back first so the swim never jumps ahead of itself
         var index = wanted;
@@ -39,12 +45,51 @@
         swim.resized = false;
         shown = index;
         var w = canvas.width, h = canvas.height;
-        // fills the screen, a little large and a little low: dark water above it for the name
-        var scale = Math.max(w / still.width, h / still.height) * 1.1;
+        // fills the screen, a little large and a little low: dark water above it for the name. Every cut is as tall
+        // as the whole picture, which is 16 to 9: sized by that, so whichever cut is drawn lands in the same place
+        var scale = Math.max(w / (still.height * 16 / 9), h / still.height) * 1.1;
         var dw = still.width * scale, dh = still.height * scale;
         pen.fillStyle = '#000';
         pen.fillRect(0, 0, w, h);
+        pen.imageSmoothingQuality = 'high';
         pen.drawImage(still, (w - dw) / 2, (h - dh) / 2 + h * 0.08, dw, dh);
+      };
+      var fetchStill = function (index, then) {
+        var still = new Image();
+        var mine = turn;
+        still.decoding = 'async';
+        still.onload = function () { if (mine !== turn) { return; } still.ready = true; draw(); if (then) { then(); } };
+        still.onerror = function () {
+          if (mine !== turn) { return; }
+          // a browser that cannot read the stills at all: the last still stands there, as it does without scripts
+          if (index === 0) { hero.classList.add('no-swim'); }
+          if (then) { then(); }
+        };
+        still.src = name(index);
+        stills[index] = still;
+      };
+      // the first still at once, then every eighth so any place in the swim has something near it, then the rest
+      var order = [0];
+      var step, index;
+      for (step = 8; step >= 1; step = step >> 1) {
+        for (index = 0; index < count; index += step) { if (order.indexOf(index) < 0) { order.push(index); } }
+      }
+      var feed = function () { if (next < order.length) { fetchStill(order[next++], feed); } };
+      // the cut this screen wants; asked again whenever the screen changes shape (a phone turned on its side)
+      var choose = function () {
+        var w = canvas.clientWidth, h = canvas.clientHeight;
+        if (!w || !h) { return; }
+        var want = 'wide';
+        if (w / h <= 0.8 && cuts.indexOf('tall') >= 0) { want = 'tall'; }
+        else if (w * Math.min(window.devicePixelRatio || 1, 2) > 2200 && cuts.indexOf('large') >= 0) { want = 'large'; }
+        if (cuts.indexOf(want) < 0) { want = cuts[0]; }
+        if (want === cut) { return; }
+        cut = want;
+        turn++;
+        stills = new Array(count);
+        shown = -1;
+        next = 0;
+        feed(); feed(); feed(); feed();
       };
       var size = function () {
         var ratio = Math.min(window.devicePixelRatio || 1, 2);
@@ -54,26 +99,10 @@
           canvas.height = h;
           swim.resized = true;
         }
+        choose();
       };
-      var fetchStill = function (index, then) {
-        var still = new Image();
-        still.decoding = 'async';
-        still.onload = function () { still.ready = true; draw(); if (then) { then(); } };
-        still.onerror = function () { if (then) { then(); } };
-        still.src = name(index);
-        stills[index] = still;
-      };
-      swim = { resized: true, shown: function () { return shown; }, loaded: function () { return stills.filter(function (s) { return s && s.ready; }).length; } };
+      swim = { resized: true, cut: function () { return cut; }, shown: function () { return shown; }, loaded: function () { return stills.filter(function (s) { return s && s.ready; }).length; } };
       size();
-      // the first still at once, then every eighth so any place in the swim has something near it, then the rest
-      var order = [0];
-      var step, index;
-      for (step = 8; step >= 1; step = step >> 1) {
-        for (index = 0; index < count; index += step) { if (order.indexOf(index) < 0) { order.push(index); } }
-      }
-      var next = 0;
-      var feed = function () { if (next < order.length) { fetchStill(order[next++], feed); } };
-      feed(); feed(); feed(); feed();
       swim.to = function (progress) { wanted = Math.round(clamp(progress) * (count - 1)); draw(); };
       swim.size = size;
     }
