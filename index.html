@@ -1,0 +1,107 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ABYSS</title>
+<meta name="description" content="ABYSS. 수심 5,200m에 가라앉은 유적으로 내려가는 1인칭 수중 호러 게임.">
+<meta name="theme-color" content="#000000">
+<meta property="og:type" content="website">
+<meta property="og:title" content="ABYSS">
+<meta property="og:description" content="수심 5,200m에 가라앉은 유적으로 내려가는 1인칭 수중 호러 게임">
+<!-- once the site has its address, write the picture's full address here (https://.../img/og.jpg): messengers do not
+     follow a relative one -->
+<meta property="og:image" content="img/og.jpg">
+<link rel="icon" type="image/png" href="img/icon.png">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
+<link rel="stylesheet" href="css/style.css">
+<script>document.documentElement.classList.add('js')</script>
+</head>
+<body class="home">
+
+<!-- The game's own site, where the poster's QR code leads. It does not explain the game the way the poster does:
+     like a game's official site it shows it. A film behind the name, the trailer, large pictures with the lines
+     the game itself puts on screen between them, and an ABOUT page. (After the reference the user gave:
+     luminocitygame.com.) -->
+
+<header class="bar">
+  <a class="mark" href="index.html">ABYSS</a>
+  <nav aria-label="사이트 메뉴">
+    <a class="on" href="index.html">HOME</a>
+    <a href="about.html">ABOUT</a>
+  </nav>
+</header>
+
+<main>
+
+  <!-- ================= the name over the game: scrolling swims toward the giant's hand ================= -->
+  <!-- The swim is 80 stills of a filmed take (img/dive/000.jpg ... 079.jpg) drawn one after another as the page is
+       scrolled; the screen stays in place meanwhile. Without scripts, or with motion turned down, the last still
+       stands there and the page scrolls on as usual. -->
+  <section class="hero" data-dive="img/dive/" data-frames="80">
+    <div class="hero-pin">
+      <img class="hero-still" src="img/dive_last.jpg" alt="버섯 동굴에서 유물을 쥐고 있는 거대한 손" width="1280" height="720">
+      <canvas class="hero-canvas" aria-hidden="true"></canvas>
+      <div class="hero-name">
+        <h1 class="title" aria-label="ABYSS">ABYS<span>S</span></h1>
+        <p class="tag">1인칭 수중 호러</p>
+        <p class="on-what">PC (Windows)</p>
+      </div>
+      <p class="cue" aria-hidden="true">SCROLL</p>
+    </div>
+  </section>
+
+  <!-- ================= trailer ================= -->
+  <!-- The film is not made yet. When it is, save it as video/trailer.mp4 (under 100 MB, GitHub's limit for one file):
+       the page finds it by itself and puts a player in this frame in place of the notice. -->
+  <section class="trailer">
+    <div class="frame" data-video="video/trailer.mp4">
+      <img src="img/trailer_poster.jpg" alt="" width="1920" height="1080" loading="lazy">
+      <div class="soon">
+        <span class="go" aria-hidden="true"></span>
+        <strong>트레일러 준비 중</strong>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= what the game says on screen, each line followed by a picture ================= -->
+  <!-- data-fx names what the scroll does to a line or a picture (js/main.js, css/style.css); each pair has its
+       own, taken from what the line says. Without scripts, or with motion turned down, all of it is simply shown. -->
+  <p class="said reveal" data-fx="typed">“DEPTH 5,200 M.<br>YOUR TANK HOLDS 3 MINUTES OF AIR.”</p>
+
+  <a class="shot reveal" data-fx="sink" href="img/shot_ruins_big.jpg"><picture><source media="(max-width: 720px)" srcset="img/shot_ruins_tall.jpg" width="960" height="1200"><img src="img/shot_ruins.jpg" alt="손전등 빛에 드러난 탑 안쪽의 벽과 창" width="1600" height="900" loading="lazy"></picture></a>
+
+  <p class="said reveal" data-fx="scatter">“THE CAGE HOLDS IT.<br>THE WORLDS ARE OUT OF PLACE.”</p>
+
+  <a class="shot reveal" data-fx="rings" href="img/shot_tower_big.jpg"><picture><source media="(max-width: 720px)" srcset="img/shot_tower_tall.jpg" width="960" height="1200"><img src="img/shot_tower.jpg" alt="탑 안에서 올려다본 돌로 된 천체 모형" width="1600" height="900" loading="lazy"></picture></a>
+
+  <p class="said reveal" data-fx="flicker">“IT DOES NOT MOVE IN THE LIGHT.”</p>
+
+  <a class="shot reveal" data-fx="beam" href="img/shot_fish_big.jpg"><picture><source media="(max-width: 720px)" srcset="img/shot_fish_tall.jpg" width="960" height="1200"><img src="img/shot_fish.jpg" alt="손전등 빛 안에 멈춰 있는 물고기" width="1600" height="900" loading="lazy"></picture></a>
+
+  <p class="said reveal" data-fx="focus">“THE ROOTS HOLD IT.<br>THE FOREST IS ASLEEP.”</p>
+
+  <a class="shot reveal" data-fx="sonar" href="img/shot_cavern_big.jpg"><picture><source media="(max-width: 720px)" srcset="img/shot_cavern_tall.jpg" width="960" height="1200"><img src="img/shot_cavern.jpg" alt="소나의 음파가 지나가며 윤곽이 드러난 버섯 동굴" width="1600" height="900" loading="lazy"></picture></a>
+
+  <p class="said reveal" data-fx="cuts" data-cuts="2,5">“THE THREE WILL NOT MOVE IN THE LIGHT.”</p>
+
+  <a class="shot reveal" data-fx="hops" href="img/shot_temple_big.jpg"><picture><source media="(max-width: 720px)" srcset="img/shot_temple_tall.jpg" width="960" height="1200"><img src="img/shot_temple.jpg" alt="신전의 큰 방에서 유물 뒤에 서 있는 석상" width="1600" height="900" loading="lazy"></picture></a>
+
+  <!-- ================= the name again, and where to read more ================= -->
+  <section class="close reveal">
+    <p class="mark big">ABYSS</p>
+    <p class="tag">1인칭 수중 호러</p>
+    <p class="on-what">PC (Windows)</p>
+    <a class="more" href="about.html">게임 소개 보기</a>
+  </section>
+
+</main>
+
+<footer class="foot">
+  <!-- who made it goes here once the maker says how they want to be named -->
+  <span>Unreal Engine 5.8</span>
+</footer>
+
+<script src="js/main.js"></script>
+</body>
+</html>

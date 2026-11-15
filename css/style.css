@@ -1,0 +1,311 @@
+/* ABYSS, the game's own site (where the poster's QR code leads). Built the way a game's official site is: black,
+   centred, a film behind the name, large pictures with a line of the game's own text between them, very little
+   else. Made for a phone first. */
+
+@font-face {
+  font-family: 'Crab';                     /* the game's title face, cut down to the letters of ABYSS */
+  src: url('../fonts/abyss-title.woff') format('woff');
+  font-display: block;
+}
+
+:root {
+  --bg: #000;
+  --ink: #eceae2;        /* text */
+  --soft: #b9bdb7;       /* second-rank text */
+  --dim: #7d8480;        /* small labels */
+  --mark: #8fd0bf;       /* the sea's green: the page it is on, a button that plays */
+  --edge: clamp(20px, 5vw, 72px);
+  --shot: 1500px;        /* widest a picture is shown */
+}
+
+* { box-sizing: border-box; }
+html { background: var(--bg); scroll-behavior: smooth; -webkit-text-size-adjust: 100%; }
+body {
+  margin: 0;
+  color: var(--ink);
+  font-family: 'Pretendard Variable', Pretendard, 'Noto Sans KR', 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif;
+  font-size: 17px;
+  line-height: 1.7;
+  word-break: keep-all;
+  overflow-wrap: break-word;
+  -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
+}
+/* the water: a little light from far above, strongest at the top of the page and gone by its foot (--sea 1..0,
+   set from the scroll by js/main.js), and a fine grain. Both lie behind everything: no picture is touched. */
+body::before, body::after { content: ""; position: fixed; inset: 0; z-index: -1; pointer-events: none; }
+body::before { background: radial-gradient(150% 100% at 50% -6%, rgba(16, 58, 51, calc(.72 * var(--sea, .55))), rgba(10, 40, 36, calc(.3 * var(--sea, .55))) 46%, rgba(0, 0, 0, 0) 100%); }
+body::after {
+  opacity: .13;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='240' height='240'%3E%3Cfilter id='n' x='0' y='0' width='100%25' height='100%25'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' seed='3' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 .86  0 0 0 0 .9  0 0 0 0 .86  1.7 0 0 0 -.72'/%3E%3C/filter%3E%3Crect width='240' height='240' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+img, video { display: block; max-width: 100%; }
+h1, h2, p, figure { margin: 0; padding: 0; }
+a { color: inherit; text-decoration: none; }
+button { font: inherit; color: inherit; }
+
+/* ---------- the bar: the name and the two pages ---------- */
+.bar {
+  position: fixed; left: 0; right: 0; top: 0; z-index: 40;
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 16px var(--edge) 30px;
+  background: linear-gradient(rgba(0, 0, 0, .9), rgba(0, 0, 0, .7) 50%, rgba(0, 0, 0, 0));
+}
+.mark { font-family: 'Crab', sans-serif; font-size: 18px; letter-spacing: .3em; color: var(--ink); }
+/* on the home page's first screen the big name is the name; the small one comes in once that has scrolled away */
+.js .home .bar .mark { opacity: 0; transition: opacity .4s; }
+.js.past-hero .home .bar .mark { opacity: 1; }
+.bar nav { display: flex; gap: clamp(20px, 3vw, 40px); }
+.bar nav a { font-size: 13px; font-weight: 600; letter-spacing: .22em; color: var(--soft); padding: 6px 0; transition: color .2s; }
+.bar nav a:hover, .bar nav a:focus-visible { color: var(--ink); }
+.bar nav a.on { color: var(--ink); border-bottom: 1px solid var(--ink); }
+
+/* ---------- the name over the game ---------- */
+/* Plain (no scripts, or motion turned down): one screen with the last still of the swim behind the name.
+   With scripts (.dive on <html>): the section is 2.6 screens tall and its inside stays put while it is scrolled
+   through; js/main.js draws the swim's stills on the canvas by how far that is, and sets
+   --dive (0 at the top, 1 when the swim is over) on the section. */
+.hero { position: relative; height: 100vh; height: 100svh; min-height: 520px; --dive: 0; }
+/* its foot fades out, so the first screen ends in the page's water and not in an edge */
+.hero-pin {
+  position: relative; height: 100vh; height: 100svh; min-height: 520px; overflow: hidden; isolation: isolate; background: #000;
+  -webkit-mask-image: linear-gradient(#000 88%, rgba(0, 0, 0, 0)); mask-image: linear-gradient(#000 88%, rgba(0, 0, 0, 0));
+}
+.dive .hero { height: 260vh; min-height: 0; }
+.dive .hero-pin { position: sticky; top: 0; min-height: 0; }
+.hero-still, .hero-canvas { position: absolute; inset: 0; width: 100%; height: 100%; }
+.hero-still { object-fit: cover; object-position: 50% 30%; opacity: .62; }
+.hero-canvas { display: none; }
+.dive .hero-still { display: none; }
+/* the picture is dim behind the name and comes up to the game's own brightness as the name goes */
+.dive .hero-canvas { display: block; opacity: calc(.5 + .5 * var(--dive)); }
+.hero-pin::after { content: ""; position: absolute; left: 0; right: 0; bottom: 0; height: 30%; z-index: 1; background: linear-gradient(rgba(0, 0, 0, 0), #000 94%); pointer-events: none; }
+.hero-pin::before { content: ""; position: absolute; left: 0; right: 0; top: 0; height: 36%; z-index: 1; background: linear-gradient(#000 0, #000 14%, rgba(0, 0, 0, 0)); pointer-events: none; opacity: calc(1 - var(--dive) * .7); }
+.hero-name { position: absolute; left: 0; right: 0; top: 50%; z-index: 2; transform: translateY(-58%); text-align: center; padding: 0 var(--edge); }
+/* the name lifts away over the first half of the swim */
+.dive .hero-name { opacity: calc(1 - var(--dive) * 2.4); transform: translateY(calc(-58% - var(--dive) * 90px)) scale(calc(1 + var(--dive) * .12)); will-change: opacity, transform; }
+.cue { display: none; }
+.dive .cue {
+  display: block; position: absolute; left: 0; right: 0; bottom: clamp(22px, 5vh, 48px); z-index: 2; text-align: center;
+  font-size: 11px; font-weight: 600; letter-spacing: .5em; text-indent: .5em; color: var(--soft);
+  opacity: calc(1 - var(--dive) * 12);
+}
+.dive .cue::after { content: ""; display: block; width: 1px; height: 34px; margin: 12px auto 0; background: linear-gradient(var(--soft), rgba(185, 189, 183, 0)); animation: cue 2.2s ease-in-out infinite; transform-origin: 50% 0; }
+@keyframes cue { 0% { transform: scaleY(0); } 55% { transform: scaleY(1); } 100% { transform: scaleY(1); opacity: 0; } }
+
+/* how deep the page has been scrolled, counted to the depth the game gives (5,200 m at the foot of the page) */
+.depth { position: fixed; left: var(--edge); bottom: 16px; z-index: 30; font-size: 11px; font-weight: 600; letter-spacing: .24em; color: var(--dim); font-variant-numeric: tabular-nums; pointer-events: none; mix-blend-mode: difference; }
+.depth b { font-weight: 600; color: var(--soft); }
+.title {
+  white-space: nowrap;
+  font-family: 'Crab', sans-serif; font-weight: 400;
+  font-size: clamp(56px, 17vw, 300px); line-height: 1;
+  letter-spacing: .16em;
+  color: #ece8da;
+  text-shadow: 0 0 60px rgba(0, 0, 0, .65);
+}
+.title span { letter-spacing: 0; }
+.tag { margin-top: clamp(14px, 2vw, 30px); font-size: clamp(15px, 1.5vw, 22px); font-weight: 600; letter-spacing: .42em; text-indent: .42em; color: var(--ink); }
+.hero .tag, .hero .on-what { text-shadow: 0 0 5px #000, 0 0 22px #000, 0 0 40px #000; }
+.hero .on-what { color: var(--ink); }
+.on-what { margin-top: 10px; font-size: clamp(12px, 1vw, 15px); font-weight: 500; letter-spacing: .2em; text-indent: .2em; color: var(--soft); }
+
+/* ---------- trailer ---------- */
+.trailer { max-width: var(--shot); margin: clamp(8px, 2vw, 30px) auto 0; padding: 0 var(--edge); }
+.frame { position: relative; aspect-ratio: 16 / 9; overflow: hidden; background: #000; border: 1px solid rgba(236, 234, 226, .16); }
+.frame::before { content: "TRAILER"; position: absolute; left: 15px; top: 12px; z-index: 2; font-size: 10px; font-weight: 600; letter-spacing: .34em; color: var(--dim); }
+.frame.has-video::before { content: none; }
+.frame img, .frame video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+.frame video { object-fit: contain; background: #000; }
+.frame > img { opacity: .45; }
+.soon { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 18px; text-align: center; }
+.soon strong { font-size: clamp(14px, 1.3vw, 18px); font-weight: 500; letter-spacing: .2em; text-indent: .2em; color: var(--soft); }
+.go { position: relative; width: clamp(56px, 6.5vw, 92px); aspect-ratio: 1; border: 1px solid rgba(236, 234, 226, .5); border-radius: 50%; }
+.go::after { content: ""; position: absolute; left: 54%; top: 50%; transform: translate(-50%, -50%); border-style: solid; border-color: transparent transparent transparent rgba(236, 234, 226, .6); border-width: .62em 0 .62em 1.05em; font-size: clamp(14px, 1.5vw, 21px); }
+
+/* ---------- what the game says on screen, between the pictures ---------- */
+.said {
+  max-width: 32em; margin: 0 auto; padding: clamp(64px, 11vw, 170px) var(--edge);
+  text-align: center;
+  font-size: clamp(20px, 5.3vw, 42px); font-weight: 200; line-height: 1.6; letter-spacing: .17em;
+  color: var(--ink);
+}
+
+/* the marks a line is quoted in stand back a little (js marks them) */
+.said .ch.q { color: var(--mark); }
+/* ---------- a picture of the game; a tap opens it large ---------- */
+/* 16 to 9 on a wide screen; on a phone held upright the middle of it, 4 to 5, so it fills more of the screen
+   (its own file, img/shot_*_tall.jpg). Its edges fade into the page instead of ending in a line. */
+.shot {
+  position: relative; display: block; max-width: var(--shot); margin: 0 auto; overflow: hidden; background: #000; aspect-ratio: 16 / 9;
+  -webkit-mask-image: linear-gradient(90deg, rgba(0, 0, 0, 0), #000 4%, #000 96%, rgba(0, 0, 0, 0)), linear-gradient(rgba(0, 0, 0, 0), #000 6%, #000 94%, rgba(0, 0, 0, 0));
+  mask-image: linear-gradient(90deg, rgba(0, 0, 0, 0), #000 4%, #000 96%, rgba(0, 0, 0, 0)), linear-gradient(rgba(0, 0, 0, 0), #000 6%, #000 94%, rgba(0, 0, 0, 0));
+  -webkit-mask-composite: source-in; mask-composite: intersect;
+}
+.shot picture { display: contents; }
+.shot img { width: 100%; height: 100%; object-fit: cover; }
+@media (max-width: 720px) {
+  /* from edge to edge of the phone: only its top and foot fade */
+  .shot {
+    aspect-ratio: 4 / 5;
+    -webkit-mask-image: linear-gradient(rgba(0, 0, 0, 0), #000 7%, #000 93%, rgba(0, 0, 0, 0)); mask-image: linear-gradient(rgba(0, 0, 0, 0), #000 7%, #000 93%, rgba(0, 0, 0, 0));
+    -webkit-mask-composite: source-over; mask-composite: add;
+  }
+}
+
+/* ---------- what the scroll does to the lines and the pictures ----------
+   Only with scripts and motion allowed (.dive on <html>); js/main.js sets the numbers. Each line and each picture
+   has its own way of arriving, named in its data-fx and taken from what the line says. Nothing here adds light to
+   a picture: a picture is only ever hidden, cut or moved. */
+/* (the fade that other blocks come up with is not used on these: js takes their reveal class away) */
+.said .word { white-space: nowrap; }
+
+/* -- lines -- */
+/* typed: written out letter by letter, a caret after the last one */
+.dive .said[data-fx="typed"] .ch { opacity: 0; }
+.dive .said[data-fx="typed"] .ch.lit { opacity: 1; }
+.dive .said[data-fx="typed"] .ch.at { position: relative; }
+.dive .said[data-fx="typed"] .ch.at::after { content: ""; position: absolute; left: 100%; bottom: .22em; width: .5em; height: 2px; background: currentColor; animation: caret .9s steps(1) infinite; }
+@keyframes caret { 50% { opacity: 0; } }
+
+/* scatter: the first sentence stands still; the letters of the last one lie out of place and come to rest.
+   --t 0..1 on the line, --h for the sentence that stands; --dx --dy (em) and --dr (degrees) on each letter. */
+.dive .said[data-fx="scatter"] { --t: 0; --h: 0; }
+.dive .said[data-fx="scatter"] .ch {
+  display: inline-block; opacity: calc(.3 + .7 * var(--t));
+  transform: translate(calc(var(--dx, 0) * (1 - var(--t)) * 1em), calc(var(--dy, 0) * (1 - var(--t)) * 1em)) rotate(calc(var(--dr, 0) * (1 - var(--t)) * 1deg));
+  will-change: transform;
+}
+.dive .said[data-fx="scatter"] .ch.held { opacity: var(--h); transform: none; }
+
+/* flicker: comes on the way a lamp does, by itself, once the line is well up the screen */
+.dive .said[data-fx="flicker"] { opacity: .07; }
+.dive .said[data-fx="flicker"].on { opacity: 1; animation: lamp-on .95s linear both; }
+@keyframes lamp-on { 0% { opacity: .07; } 5% { opacity: 1; } 10%, 22% { opacity: .12; } 26% { opacity: .85; } 31%, 46% { opacity: .2; } 52%, 100% { opacity: 1; } }
+
+/* focus: out of focus and large, drawn sharp */
+.dive .said[data-fx="focus"] { --t: 0; opacity: calc(.3 + .7 * var(--t)); filter: blur(calc((1 - var(--t)) * 13px)); transform: scale(calc(1.16 - .16 * var(--t))); will-change: filter, transform; }
+.dive .said[data-fx="focus"].sharp { filter: none; }
+
+/* cuts: three pieces, each there at once */
+.dive .said[data-fx="cuts"] .word { opacity: 0; }
+.dive .said[data-fx="cuts"] .word.in { opacity: 1; }
+
+/* -- pictures -- */
+/* lamp (a picture with no data-fx): a soft-edged circle of it shows, small as it enters the screen and the whole of
+   it once its middle reaches the screen's middle. --lamp 0..1 */
+.dive .shot[data-fx="lamp"] { --lamp: 0; }
+.dive .shot[data-fx="lamp"] img {
+  -webkit-mask-image: radial-gradient(circle at 50% 50%, #000 calc(var(--lamp) * 130% - 22%), rgba(0, 0, 0, 0) calc(var(--lamp) * 130%));
+  mask-image: radial-gradient(circle at 50% 50%, #000 calc(var(--lamp) * 130% - 22%), rgba(0, 0, 0, 0) calc(var(--lamp) * 130%));
+  transform: scale(calc(1.1 - .1 * var(--lamp)));
+  will-change: transform;
+}
+
+/* sink: the frame is a window the wall goes up past, faster than the page, as if sinking along it.
+   --p 0 as it comes on at the foot of the screen, 1 as it leaves at the top; --in its first moments */
+.dive .shot[data-fx="sink"] { --p: 0; --in: 0; }
+.dive .shot[data-fx="sink"] img { height: 100%; object-fit: cover; opacity: calc(.2 + .8 * var(--in)); transform: translateY(calc((.5 - var(--p)) * 24%)) scale(1.3); will-change: transform; }
+
+/* rings: three discs of the picture, one inside the other, each turned out of place; they turn home together.
+   (js adds the three .ring layers over the picture itself.)  --p 0..1 */
+.dive .shot[data-fx="rings"] { --p: 0; --in: 0; opacity: calc(.25 + .75 * var(--in)); }
+.dive .shot .ring {
+  position: absolute; inset: 0; background-size: 100% 100%; background-repeat: no-repeat; pointer-events: none;
+  -webkit-mask-image: radial-gradient(circle closest-side at 50% 50%, #000 calc(var(--r) - 1px), rgba(0, 0, 0, 0) var(--r));
+  mask-image: radial-gradient(circle closest-side at 50% 50%, #000 calc(var(--r) - 1px), rgba(0, 0, 0, 0) var(--r));
+  transform: rotate(calc(var(--turn) * (1 - var(--p))));
+  will-change: transform;
+}
+.dive .shot .ring.a { --r: 97%; --turn: -18deg; }
+.dive .shot .ring.b { --r: 66%; --turn: 36deg; }
+.dive .shot .ring.c { --r: 36%; --turn: -62deg; }
+
+/* beam: a small circle of the picture travels along the fish, tail to head, and then opens.
+   --bx --by where the circle is, --br how wide (1 = all of the picture) */
+.dive .shot[data-fx="beam"] { --bx: 27%; --by: 50%; --br: .16; }
+.dive .shot[data-fx="beam"] img {
+  -webkit-mask-image: radial-gradient(circle at var(--bx) var(--by), #000 calc(var(--br) * 135% - 14%), rgba(0, 0, 0, 0) calc(var(--br) * 135%));
+  mask-image: radial-gradient(circle at var(--bx) var(--by), #000 calc(var(--br) * 135% - 14%), rgba(0, 0, 0, 0) calc(var(--br) * 135%));
+}
+
+/* sonar: the picture is all but dark; a wave goes out over it from the diver's place below and shows what it passes,
+   and after it the whole comes up. (js adds the .wave layer.)  --front how far the wave has gone, --lit the whole */
+.dive .shot[data-fx="sonar"] { --front: -5%; --lit: 0; }
+.dive .shot[data-fx="sonar"] img { opacity: calc(.12 + .88 * var(--lit)); }
+.dive .shot .wave {
+  position: absolute; inset: 0; background-size: 100% 100%; background-repeat: no-repeat; pointer-events: none;
+  -webkit-mask-image: radial-gradient(circle at 50% 112%, rgba(0, 0, 0, 0) calc(var(--front) - 55%), #000 calc(var(--front) - 5%), #000 var(--front), rgba(0, 0, 0, 0) calc(var(--front) + .6%));
+  mask-image: radial-gradient(circle at 50% 112%, rgba(0, 0, 0, 0) calc(var(--front) - 55%), #000 calc(var(--front) - 5%), #000 var(--front), rgba(0, 0, 0, 0) calc(var(--front) + .6%));
+}
+
+/* hops: the picture goes dark for a moment three times, and each time the figure is nearer. --near its size */
+.dive .shot[data-fx="hops"] { --near: 1; }
+.dive .shot[data-fx="hops"] img { transform: scale(var(--near)); transform-origin: 50% 36%; transition: opacity .08s linear; }
+.dive .shot[data-fx="hops"].dark img { opacity: 0; }
+
+/* the trailer's frame opens from a slit as it comes up. --p 0..1 */
+.dive .trailer { --p: 0; }
+.dive .trailer .frame { -webkit-clip-path: inset(calc((1 - var(--p)) * 42%) 0); clip-path: inset(calc((1 - var(--p)) * 42%) 0); }
+.dive .trailer .frame > img { transform: scale(calc(1.2 - .2 * var(--p))); }
+.dive .trailer .soon { opacity: calc(var(--p) * 3 - 2); }
+
+/* ---------- the name again, and where to go next ---------- */
+.close, .about-top { text-align: center; padding: clamp(40px, 7vw, 110px) var(--edge) clamp(70px, 10vw, 150px); }
+.about-top { padding-top: clamp(120px, 17vw, 240px); padding-bottom: clamp(30px, 5vw, 80px); }
+.mark.big { font-size: clamp(40px, 8vw, 120px); letter-spacing: .16em; text-indent: .16em; line-height: 1; }
+.more { display: inline-block; margin-top: clamp(28px, 4vw, 54px); padding: 13px 30px; border: 1px solid rgba(236, 234, 226, .55); font-size: 14px; font-weight: 600; letter-spacing: .14em; text-indent: .14em; color: var(--ink); transition: background-color .2s, color .2s; }
+.more:hover, .more:focus-visible { background: var(--ink); color: #000; }
+.home .more::after { content: "\2192"; display: inline-block; margin-left: .8em; letter-spacing: 0; }
+.home .close::before { content: ""; display: block; width: 1px; height: clamp(54px, 8vw, 110px); margin: 0 auto clamp(30px, 4vw, 56px); background: linear-gradient(rgba(236, 234, 226, 0), rgba(236, 234, 226, .5)); }
+
+/* ---------- ABOUT: a heading and a few lines, centred ---------- */
+.text { max-width: 42em; margin: 0 auto; padding: clamp(60px, 9vw, 140px) var(--edge) clamp(30px, 4vw, 60px); text-align: center; }
+.text h2 { font-size: clamp(24px, 3vw, 44px); font-weight: 700; letter-spacing: .04em; line-height: 1.3; }
+.text h2::before { content: ""; display: block; width: 30px; height: 1px; margin: 0 auto clamp(20px, 2.2vw, 30px); background: var(--mark); opacity: .75; }
+.text p { margin-top: 18px; font-size: clamp(16px, 1.3vw, 19px); line-height: 1.85; color: var(--soft); }
+.text h2 + p { margin-top: clamp(20px, 2.4vw, 34px); }
+
+/* two clips of play side by side (one above the other on a phone); they play while they are on screen */
+.pair { display: grid; grid-template-columns: minmax(0, 1fr); gap: 6px; max-width: var(--shot); margin: 0 auto; }
+.clip { position: relative; aspect-ratio: 16 / 9; overflow: hidden; background: #000; }
+.clip video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+
+/* two stills of one view, the line between them moved by hand */
+.compare { position: relative; max-width: var(--shot); margin: 0 auto; aspect-ratio: 16 / 9; overflow: hidden; background: #000; touch-action: pan-y; }
+.compare img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+.compare .off { clip-path: inset(0 calc(100% - var(--pos)) 0 0); }
+.compare .bar-line { position: absolute; top: 0; bottom: 0; left: var(--pos); width: 2px; margin-left: -1px; background: var(--ink); }
+.compare .bar-line::after { content: ""; position: absolute; left: 50%; top: 50%; width: 36px; height: 36px; margin: -18px 0 0 -18px; border: 2px solid var(--ink); border-radius: 50%; background: rgba(0, 0, 0, .55); }
+.compare .tag-off, .compare .tag-on { position: absolute; top: 12px; padding: 3px 10px; font-size: 12px; font-weight: 600; letter-spacing: .1em; background: rgba(0, 0, 0, .6); }
+.compare .tag-off { left: 12px; }
+.compare .tag-on { right: 12px; }
+.compare input { position: absolute; inset: 0; width: 100%; height: 100%; margin: 0; opacity: 0; cursor: ew-resize; }
+
+/* two recordings of the same sound to listen to */
+.listen { display: flex; flex-wrap: wrap; justify-content: center; gap: 12px; margin-top: clamp(26px, 3vw, 40px); }
+.ear { display: inline-flex; align-items: center; gap: 12px; padding: 13px 26px 13px 22px; background: none; border: 1px solid rgba(236, 234, 226, .55); cursor: pointer; font-size: 15px; font-weight: 600; letter-spacing: .06em; transition: border-color .2s, background-color .2s, color .2s; }
+.ear .tri { width: 0; height: 0; border-style: solid; border-color: transparent transparent transparent var(--ink); border-width: 7px 0 7px 11px; }
+.ear:hover, .ear:focus-visible { border-color: var(--ink); }
+.ear.on { border-color: var(--mark); color: var(--mark); }
+.ear.on .tri { width: 11px; height: 14px; border: 0; border-left: 4px solid var(--mark); border-right: 4px solid var(--mark); }
+
+/* ---------- the foot ---------- */
+.foot { display: flex; flex-direction: column; align-items: center; gap: 6px; padding: 26px var(--edge) 46px; border-top: 1px solid rgba(236, 234, 226, .12); font-size: 12px; letter-spacing: .14em; color: var(--dim); text-align: center; }
+
+/* ---------- things come up softly as they are reached ---------- */
+@media (prefers-reduced-motion: no-preference) {
+  .js .reveal { opacity: 0; transform: translateY(22px); transition: opacity 1s ease, transform 1s cubic-bezier(.2, .7, .2, 1); }
+  .js .reveal.in { opacity: 1; transform: none; }
+}
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+}
+
+/* ---------- wide screens ---------- */
+@media (min-width: 900px) {
+  .hero-vid { transform: translateY(14%) scale(1.18); }
+  .pair { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .trailer, .shot, .pair, .compare { width: calc(100% - 2 * var(--edge)); }
+  .trailer { padding: 0; }
+}

@@ -1,0 +1,94 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ABYSS - About</title>
+<meta name="description" content="ABYSS는 수심 5,200m에 가라앉은 유적으로 내려가는 1인칭 수중 호러 게임입니다.">
+<meta name="theme-color" content="#000000">
+<meta property="og:type" content="website">
+<meta property="og:title" content="ABYSS">
+<meta property="og:description" content="수심 5,200m에 가라앉은 유적으로 내려가는 1인칭 수중 호러 게임">
+<meta property="og:image" content="img/og.jpg">
+<link rel="icon" type="image/png" href="img/icon.png">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
+<link rel="stylesheet" href="css/style.css">
+<script>document.documentElement.classList.add('js')</script>
+</head>
+<body class="about">
+
+<!-- ABOUT: what the game is, the one rule it turns on, and what was made for it. Short, as on a game's own site;
+     the poster carries the how-to-play and the list of techniques. -->
+
+<header class="bar">
+  <a class="mark" href="index.html">ABYSS</a>
+  <nav aria-label="사이트 메뉴">
+    <a href="index.html">HOME</a>
+    <a class="on" href="about.html">ABOUT</a>
+  </nav>
+</header>
+
+<main>
+
+  <section class="about-top">
+    <p class="mark big">ABYSS</p>
+    <p class="tag">1인칭 수중 호러</p>
+    <p class="on-what">PC (Windows)</p>
+  </section>
+
+  <section class="text reveal">
+    <h2>수심 5,200m</h2>
+    <p>ABYSS는 1인칭 수중 호러 게임입니다. 잠수부가 되어 수심 5,200m에 가라앉은 유적으로 내려갑니다. 산소통 하나로 버틸 수 있는 시간은 3분입니다.</p>
+    <p>유적의 탑과 동굴, 신전에 유물이 하나씩 있습니다. 세 개를 모두 가운데 제단에 올려놓으면 수문이 열리고, 그 길로 유적을 빠져나갑니다.</p>
+  </section>
+
+  <a class="shot reveal" href="img/shot_hall_big.jpg"><picture><source media="(max-width: 720px)" srcset="img/shot_hall_tall.jpg" width="960" height="1200"><img src="img/shot_hall.jpg" alt="빛기둥이 유물 위로 떨어지는 신전의 큰 방" width="1600" height="900" loading="lazy"></picture></a>
+
+  <section class="text reveal">
+    <h2>빛이 닿는 동안에만</h2>
+    <p>유적 안에 있는 것들은 손전등 빛이 닿는 동안에는 움직이지 못합니다. 빛을 치우면 다가옵니다.</p>
+  </section>
+
+  <div class="pair reveal">
+    <div class="clip"><video muted playsinline loop preload="none" poster="img/clip_fish.jpg" data-auto aria-label="손전등을 켜면 물고기가 멈추고, 끄면 다가오는 게임 영상"><source src="video/fish.mp4" type="video/mp4"></video></div>
+    <div class="clip"><video muted playsinline loop preload="none" poster="img/clip_temple.jpg" data-auto aria-label="손전등을 끌 때마다 석상이 다가오는 게임 영상"><source src="video/temple.mp4" type="video/mp4"></video></div>
+  </div>
+
+  <section class="text reveal">
+    <h2>어둡게 찍힌 화면</h2>
+    <p>화면은 어두운 곳에서 카메라로 찍은 영상처럼 보이게 만들었습니다. 센서 노이즈와 렌즈 왜곡을 더하고 색을 뺐습니다. 가운데 선을 밀면 효과를 끈 화면과 비교할 수 있습니다.</p>
+  </section>
+
+  <div class="compare reveal" style="--pos: 50%">
+    <img src="img/look_on.jpg" alt="카메라 효과를 켠 게임 화면" width="1600" height="900" loading="lazy">
+    <img class="off" src="img/look_off.jpg" alt="카메라 효과를 끈 같은 화면" width="1600" height="900" loading="lazy">
+    <span class="tag-off">효과 끔</span><span class="tag-on">효과 켬</span>
+    <span class="bar-line" aria-hidden="true"></span>
+    <input type="range" min="0" max="100" value="50" aria-label="효과를 끈 화면과 켠 화면의 경계">
+  </div>
+
+  <section class="text reveal">
+    <h2>방향이 들리는 소리</h2>
+    <p>보이지 않는 것은 소리로 알아야 합니다. 그래서 헤드폰에서 소리의 방향이 들리도록, 양쪽 귀에 소리가 닿는 시간차와 음색 차이를 계산하는 입체 음향을 직접 만들었습니다.</p>
+    <p>헤드폰을 쓰고 들어 보세요. 같은 소리가 머리 둘레를 한 바퀴 돕니다.</p>
+    <div class="listen">
+      <button type="button" class="ear" data-audio="audio/head_on.m4a"><span class="tri" aria-hidden="true"></span>게임의 소리</button>
+      <button type="button" class="ear" data-audio="audio/head_off.m4a"><span class="tri" aria-hidden="true"></span>엔진 기본</button>
+    </div>
+  </section>
+
+  <section class="close reveal">
+    <p class="on-what">Unreal Engine 5.8과 C++로 만들었습니다.</p>
+    <a class="more" href="index.html">처음으로</a>
+  </section>
+
+</main>
+
+<footer class="foot">
+  <!-- who made it goes here once the maker says how they want to be named -->
+  <span>Unreal Engine 5.8</span>
+</footer>
+
+<script src="js/main.js"></script>
+</body>
+</html>
